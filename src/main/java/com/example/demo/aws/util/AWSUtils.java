@@ -7,6 +7,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
@@ -15,8 +16,8 @@ import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 
 public class AWSUtils {
 
-    private static String accessKey = "AKIAJDK62XTC6UUU5ZAA";
-    private static String secretKey = "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";
+    private static String accessKey = "AKIAJ2N2NIBHUV1SE22IA";
+    private static String secretKey = "sc53DCJSEQpl/f2nyKLX2PnhwnsfoFfX2R6jtTtH+";
     private static Region region = Region.AP_NORTHEAST_2;
     private static ObjectMapper objectMapper = new ObjectMapper();
 
@@ -29,6 +30,10 @@ public class AWSUtils {
                 .region(region)
                 .credentialsProvider(getCredential())
                 .build();
+    }
+
+    public static KinesisAsyncClient getKinesisAsyncClient() {
+        return KinesisAsyncClient.builder().region(region).credentialsProvider(getCredential()).build();
     }
 
     public static boolean validateStream(String streamName) {

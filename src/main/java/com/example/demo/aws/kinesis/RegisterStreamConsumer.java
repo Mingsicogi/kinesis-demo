@@ -5,6 +5,7 @@ import com.example.demo.common.CommonUtils;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.KinesisException;
 import software.amazon.awssdk.services.kinesis.model.RegisterStreamConsumerRequest;
+import software.amazon.awssdk.services.kinesis.model.RegisterStreamConsumerResponse;
 
 public class RegisterStreamConsumer {
     public static void main(String[] args) {
@@ -34,8 +35,9 @@ public class RegisterStreamConsumer {
                             .streamARN("arn:aws:kinesis:ap-northeast-2:684660554698:stream/mins-stream")
                             .build();
 
-
-            kinesisClient.registerStreamConsumer(registerStreamConsumerRequest);
+            RegisterStreamConsumerResponse registerStreamConsumerResponse = kinesisClient.registerStreamConsumer(registerStreamConsumerRequest);
+            String s = registerStreamConsumerResponse.consumer().consumerARN();
+            System.out.println("consumer ARN = " + s);
         } catch (KinesisException e) {
             System.err.println(e.getMessage());
             System.exit(1);
