@@ -9,15 +9,14 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
-import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
-import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
-import software.amazon.awssdk.services.kinesis.model.KinesisException;
-import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
+import software.amazon.awssdk.services.kinesis.model.*;
+
+import java.util.List;
 
 public class AWSUtils {
 
-    private static String accessKey = "AKIAJ2N2NIBHUV1SE22IA";
-    private static String secretKey = "sc53DCJSEQpl/f2nyKLX2PnhwnsfoFfX2R6jtTtH+";
+    private static String accessKey = "AKIAJMGCW3123GE2323FXLNV7DA";
+    private static String secretKey = "Zj22oGmIhh8vTiGDyCv232323qDQD123fGXLYMesphqqqXQHp";
     private static Region region = Region.AP_NORTHEAST_2;
     private static ObjectMapper objectMapper = new ObjectMapper();
 
@@ -63,7 +62,7 @@ public class AWSUtils {
             String objectDataToString = objectMapper.writeValueAsString(data);
 
             PutRecordRequest request = PutRecordRequest.builder()
-                    .partitionKey("test") // We use the ticker symbol as the partition key, explained in the Supplemental Information section below.
+                    .partitionKey("651243651423kjsadhfkjhasdfkjhasd^^^!@*#&^!@*&#^*!@&#^*!@&#^*!@&#^0") // We use the ticker symbol as the partition key, explained in the Supplemental Information section below.
                     .streamName(streamName)
                     .data(SdkBytes.fromByteArray(objectDataToString.getBytes()))
                     .build();
@@ -74,5 +73,24 @@ public class AWSUtils {
         } catch (JsonProcessingException | KinesisException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static List<Shard> listKinShards(KinesisClient kinesisClient, String name) {
+
+        try {
+            ListShardsRequest request = ListShardsRequest.builder()
+                .streamName(name)
+                .build();
+
+            ListShardsResponse response = kinesisClient.listShards(request);
+
+            return response.shards();
+        } catch (KinesisException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+
+        throw new RuntimeException("");
     }
 }

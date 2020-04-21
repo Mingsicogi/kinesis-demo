@@ -2,40 +2,50 @@ package com.example.demo;
 
 import com.example.demo.aws.util.AWSUtils;
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
-import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
-import software.amazon.awssdk.services.kinesis.model.SubscribeToShardEvent;
-import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
-import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponseHandler;
+import software.amazon.awssdk.services.kinesis.model.*;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 public class EnhancedConsumer {
 
-	private static final String CONSUMER_ARN = "arn:aws:kinesis:ap-northeast-2:684660554698:stream/mins-stream/consumer/mins-consume:1587445885";
+	private static final String CONSUMER_ARN = "arn:aws:kinesis:ap-northeast-2:684660554698:stream/mins-stream/consumer/mins-consume:1587461292";
 	private static final String SHARD_ID = "shardId-000000000000";
 
 	public static void main(String[] args) {
 
-		KinesisAsyncClient client = AWSUtils.getKinesisAsyncClient();
+//		KinesisAsyncClient client = AWSUtils.getKinesisAsyncClient();
 
-		SubscribeToShardRequest request = SubscribeToShardRequest.builder()
-			.consumerARN(CONSUMER_ARN)
-			.shardId(SHARD_ID)
-			.startingPosition(s -> s.type(ShardIteratorType.LATEST)).build();
+		List<Shard> shards = AWSUtils.listKinShards(AWSUtils.getKinesisClient(), "mins-stream");
 
-		// Call SubscribeToShard iteratively to renew the subscription periodically.
-		while(true) {
-			// Wait for the CompletableFuture to complete normally or exceptionally.
-			callSubscribeToShardWithVisitor(client, request).join();
-		}
+		ExecutorService executorService = Executors.newFixedThreadPool(shards.size());
+		shards.forEach(shard -> {
+			SubscribeToShardRequest request = SubscribeToShardRequest.builder()
+				.consumerARN(CONSUMER_ARN)
+				.shardId(shard.shardId())
+				.startingPosition(s -> s.type(ShardIteratorType.LATEST)).build();
+
+
+			// Call SubscribeToShard iteratively to renew the subscription periodically.
+//			while(true) {
+				// Wait for the CompletableFuture to complete normally or exceptionally.
+			log.info("@@@@@ shard id : {}", shard.shardId());
+			executorService.execute(() -> callSubscribeToShardWithVisitor(KinesisAsyncClient.builder().region(Region.AP_NORTHEAST_2).credentialsProvider(AWSUtils.getCredential()).build(), request).join());
+//			callSubscribeToShardWithVisitor(AWSUtils.getKinesisAsyncClient(), request).join();
+//			}
+		});
+
 
 		// Close the connection before exiting.
 		// client.close();
 	}
-
 
 	/**
 	 * Subscribes to the stream of events by implementing the SubscribeToShardResponseHandler.Visitor interface.
@@ -55,6 +65,7 @@ public class EnhancedConsumer {
 			.onError(t -> System.err.println("Error during stream - " + t.getMessage()))
 			.subscriber(visitor)
 			.build();
+
 		return client.subscribeToShard(request, responseHandler);
 	}
 }

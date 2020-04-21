@@ -32,7 +32,7 @@ public class CreateDataStream {
         try {
             CreateStreamRequest streamReq = CreateStreamRequest.builder()
                     .streamName(streamName)
-                    .shardCount(1)
+                    .shardCount(3)
                     .build();
 
             kinesisClient.createStream(streamReq);
