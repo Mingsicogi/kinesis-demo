@@ -15,8 +15,8 @@ import java.util.List;
 
 public class AWSUtils {
 
-    private static String accessKey = "AKIAJMGCW3123GE2323FXLNV7DA";
-    private static String secretKey = "Zj22oGmIhh8vTiGDyCv232323qDQD123fGXLYMesphqqqXQHp";
+    private static String accessKey = "AKIAI27WUS32N73J7ZPQ";
+    private static String secretKey = "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";
     private static Region region = Region.AP_NORTHEAST_2;
     private static ObjectMapper objectMapper = new ObjectMapper();
 

@@ -2,7 +2,6 @@ package com.example.demo;
 
 import com.example.demo.aws.util.AWSUtils;
 import lombok.extern.slf4j.Slf4j;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.model.*;
@@ -16,7 +15,7 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class EnhancedConsumer {
 
-	private static final String CONSUMER_ARN = "arn:aws:kinesis:ap-northeast-2:684660554698:stream/mins-stream/consumer/mins-consume:1587461292";
+	private static final String CONSUMER_ARN = "arn:aws:kinesis:ap-northeast-2:684660554698:stream/mins-stream/consumer/mins-consumer:1587573725";
 	private static final String SHARD_ID = "shardId-000000000000";
 
 	public static void main(String[] args) {

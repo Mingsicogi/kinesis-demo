@@ -26,13 +26,12 @@ public class CreateDataStream {
         createStream(AWSUtils.getKinesisClient(), streamName);
     }
 
-    // snippet-start:[kinesis.java2.create.main]
     public static void createStream(KinesisClient kinesisClient, String streamName) {
 
         try {
             CreateStreamRequest streamReq = CreateStreamRequest.builder()
                     .streamName(streamName)
-                    .shardCount(3)
+                    .shardCount(1)
                     .build();
 
             kinesisClient.createStream(streamReq);
